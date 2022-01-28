@@ -1,73 +1,240 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8"/>
+    <title>Hyoukaki</title>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+	<!--chart js-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
 </head>
-<body>
-    <div>Teachable Machine Image Model</div>
-<!--<button type="button" onclick="init()">Start</button>-->
-<div id="webcam-container"></div>
-<div id="label-container"></div>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
-<script type="text/javascript">
-    // More API functions here:
-    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
-
-    // the link to your model provided by Teachable Machine export panel
-    const URL = "./my_model/";
-
-    let model, webcam, labelContainer, maxPredictions;
-
-    // Load the image model and setup the webcam
-    async function init() {
-        const modelURL = URL + "model.json";
-        const metadataURL = URL + "metadata.json";
-
-        // load the model and metadata
-        // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
-        // or files from your local hard drive
-        // Note: the pose library adds "tmImage" object to your window (window.tmImage)
-        model = await tmImage.load(modelURL, metadataURL);
-        maxPredictions = model.getTotalClasses();
-
-        // Convenience function to setup a webcam
-        const flip = true; // whether to flip the webcam
-        webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
-        await webcam.setup(); // request access to the webcam
-        await webcam.play();
-        window.requestAnimationFrame(loop);
-
-        // append elements to the DOM
-        document.getElementById("webcam-container").appendChild(webcam.canvas);
-        labelContainer = document.getElementById("label-container");
-        for (let i = 0; i < maxPredictions; i++) { // and class labels
-            labelContainer.appendChild(document.createElement("div"));
-        }
-    }
-
-    async function loop() {
-        webcam.update(); // update the webcam frame
-        await predict();
-        window.requestAnimationFrame(loop);
-    }
-
-    // run the webcam image through the image model
-    async function predict() {
-        // predict can take in an image, video or canvas html element
-        const prediction = await model.predict(webcam.canvas);
-        console.log(prediction);
-        for (let i = 0; i < maxPredictions; i++) {
-            const classPrediction =
-                prediction[i].className + ": " + prediction[i].probability.toFixed(2);
-            labelContainer.childNodes[i].innerHTML = classPrediction;
-        }
-    }
-    init();
-</script>
-
+<body><script type="text/javascript" src="https://ad.netowl.jp/js/star-php.js"></script>
+    <div>テストタイトル</div>
+	<div id="states"></div>
+	<div id="explanation">
+		
+	</div>
+	<div id="operation">
+		<button id="start_button" onclick="settings.starting = true;document.getElementById('states').innerHTML = '測定中'">測定再開</button>
+		<button id="pause_button" onclick="settings.starting = false;document.getElementById('states').innerHTML = '停止中'">一時停止</button>
+		<button id="clear_button">データクリア</button>
+		<button id="end_button">測定終了</button>
+	</div>
+	<div id="webcam-container"></div>
+	<div id="sidebar">
+		<canvas id="chart"></canvas>
+		<div id="label-container"></div>
+	</div>
 </body>
+
+<script type="text/javascript">
+let URL = "./my_model/";
+URL = "https://sou-github.github.io/Presentation-evaluation/my_model/";
+
+let model;
+let webcam;
+let labelContainer;
+let maxPredictions;
+
+var alldata;
+var mabiki = 0;
+
+let chartChart = document.getElementById("chart");
+let labelcontainer = document.getElementById("label-container");
+
+var settings = new Object();
+settings.camstarted = false;
+settings.starting = false;
+
+
+
+const available = location.protocol == "http:" ? alert("この環境では実行できません") : true;
+
+async function init() {
+	settings.camstarted = true;
+	settings.starting = true;
+
+	const modelURL = URL + "model.json";
+	const metadataURL = URL + "metadata.json";
+	
+	alldata = new Array();
+
+	model = await tmImage.load(modelURL, metadataURL);
+	maxPredictions = model.getTotalClasses();
+
+	const flip = true;//whether to flip the webcam
+	webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+	await webcam.setup();//request access to the webcam
+	await webcam.play();
+	window.requestAnimationFrame(loop);
+
+	document.getElementById("webcam-container").appendChild(webcam.canvas);
+	labelContainer = document.getElementById("label-container");
+	for (let i = 0; i < maxPredictions; i++) { // and class labels
+		labelContainer.appendChild(document.createElement("div"));
+	}
+}
+
+async function loop(){
+	webcam.update();
+	if(settings.starting){
+		mabiki++;
+		mabiki = mabiki > 15 ? 0 : mabiki;
+		
+		const prediction = await model.predict(webcam.canvas);
+		
+		if(mabiki == 0){
+			let adl = alldata.length;
+			alldata[adl] = new Object();
+			console.log(prediction);
+			for(let i = 0;i < prediction.length;++i){
+				alldata[adl][prediction[i].className] = prediction[i].probability.toFixed(2);
+			}
+			
+			let labelval = "<div>現在の総合評価</div>";
+			let ave = new Object();
+			for(let i = 0;i < alldata.length;++i){//平均算出処理
+				for(j in alldata[i]){
+					ave[j] = !ave[j] ? 0 : ave[j];
+					ave[j] += alldata[i][j] / alldata.length;
+				}
+			}
+			for(i in ave){
+				labelval += `<div>${i} : ${ave[i]}<` + `/div>`;
+			}
+			labelcontainer.innerHTML = labelval;
+			
+			
+			let cad = new Array();
+			for(let i = 0;i < alldata.length;++i){
+				cad[i] = alldata[i]["smile"];
+			}
+			const maximumlength = 20;//直近いくつの値を表示するか
+			if(cad.length > maximumlength){
+				for(let i = 0;i < maximumlength;++i){
+					cad[i] = cad[cad.length - maximumlength + i];
+				}
+				cad.length = maximumlength;
+			}
+			new Chart(chartChart, {
+				type: 'line',
+				data: {
+					labels: new Array(cad.length),
+					datasets: [{
+						label: '# of Votes',
+						data: cad,
+						backgroundColor: '#FF6384',
+					}]
+				},
+				options: {
+					animation: false,
+					scales: {
+						yAxes: [{
+							ticks: {
+								beginAtZero:true
+							}
+						}]
+					}
+				}
+			});
+		}
+		                                                    
+	}
+	window.requestAnimationFrame(loop);
+}
+if(available){
+	try{
+		init();//関数呼び出し
+	}catch(e){
+		alert("Something Went Wrong!!!!!!")
+	}
+}
+
+async function end(){
+	
+}
+
+document.getElementById("start_button").onclick = () => settings.starting = true;
+document.getElementById("pause_button").onclick = () => settings.starting = false;
+document.getElementById("clear_button").onclick = () => alert("未実装の機能です");
+document.getElementById("end_button").onclick = end;
+
+
+
+</script>
+<style>
+body{
+	text-align:center;
+	padding:0;
+	margin:0;
+}
+
+button{
+	width:150px;
+	margin:3px;
+}
+
+
+/* CSS */
+button{
+  background-image: linear-gradient(-180deg, #37AEE2 0%, #1E96C8 100%);
+  border-radius: .5rem;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  display: flex;
+  font-size: 16px;
+  justify-content: center;
+  padding: 1rem 1.75rem;
+  text-decoration: none;
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-43:hover {
+  background-image: linear-gradient(-180deg, #1D95C9 0%, #17759C 100%);
+}
+
+@media (min-width: 768px) {
+  .button-43 {
+    padding: 1rem 2rem;
+  }
+}
+
+#explanation{
+	display:flex;
+	width:600px;
+	heidth:400px;
+	background-color:#0F0;
+	overflow-y:scroll;
+	overflow-x:hidden;
+}
+
+#operation{
+	width:200px;
+	float:left;
+}
+
+#webcam-container{
+	background-color:#F00000;
+	width:90vh;
+	height:90vh;
+	display:inline-block;
+}
+#webcam-container canvas{
+	width :100%;
+	height:100%;
+}
+
+#sidebar{
+	width:300px;
+	float:right;
+}
+#label-container{
+	display:inline-block;
+}
+</style>
 </html>
