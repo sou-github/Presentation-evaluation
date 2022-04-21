@@ -104,7 +104,9 @@ p{
 
 .l_movie{
   width: 70%;
+	height: calc(70vw * 9 / 16);
 }
 
 .r_ans_num{
+	width: 30%;
 }
