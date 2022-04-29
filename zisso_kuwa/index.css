@@ -95,14 +95,20 @@ p{
 
 #attention{
 	display: flex;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 #uke{
 	display: flex;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 #impression{
 	display: flex;
+	margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 .answer{
@@ -125,5 +131,5 @@ p{
 }
 
 .tyoiL{
-	margin-left: 10px;
+	margin-left: 15px;
 }

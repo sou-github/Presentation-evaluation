@@ -57,10 +57,15 @@ https://csshtml.work/list-style-none/#:~:text=%E7%82%B9%E3%82%92%E6%B6%88%E3%81%
 				</div>
 
         <h3 id="use">使い方</h3>
-        <p>本ページの使用方法は以下の通りです。</p>
-        <ol>
-          <li></li>
-        </ol>
+        <ul>
+					<li>画面下の"start"ボタンで録画開始。約5秒後に採点され始めます</li>
+					<li>"stop"ボタンで録画停止されます。</li>
+					<li>"reset"ボタンで結果をリセットします。</li>
+				</ul>
+				<p>採点結果は全部で3つの要素の、注目度、好感度、印象から構成されます。
+					これらはそれぞれどれだけの人が注目して見ているか、どれだけの人があなたのプレゼンを楽しんでいるか、あなたのプレゼンがどのくらい印象的であったかを採点しています。
+				</p>
+
 
         <h3 id="sistem">システム</h3>
         <div id="hondai">
@@ -69,13 +74,22 @@ https://csshtml.work/list-style-none/#:~:text=%E7%82%B9%E3%82%92%E6%B6%88%E3%81%
             <div class="r_ans_num">
 							<div class="tyoiL">
 								<p>出力結果</p>
-								<div id="attention"></div>
-								<div id="uke"></div>
-								<div id="impression"></div>
+								<div id="attention">
+									<div>注目度</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="uke">
+									<div>好感度</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="impression">
+									<div>印象　</div><div class="tyoiL">数値を出力</div>
+								</div>
 							</div>
 						</div>
           </div>
           <div class="operation">
+						<div class="start"></div>
+						<div class="stop"></div>
+						<div class="reset"></div>
           </div>
         </div>
 			</section>
