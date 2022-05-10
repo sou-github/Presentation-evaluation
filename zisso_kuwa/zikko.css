@@ -1,0 +1,44 @@
+article{
+  width: 1000px;
+  height: 600px:
+}
+
+.answer{
+  display: flex;
+}
+
+.answer div{
+
+  /*background: #CCC;*/
+}
+
+.l_movie{
+	border: 1px solid #000;
+  width: 70%;
+	height: calc(70vw * 9 / 16);
+}
+
+.r_ans_num{
+	width: 30%;
+}
+
+.tyoiL{
+	margin-left: 15px;
+}
+
+.operation{
+	display: flex;
+	margin-left: 10px;
+}
+
+.start{
+	margin-left: 10px;
+}
+
+.stop{
+	margin-left: 50px;
+}
+
+.reset{
+	margin-left: 50px;
+}
