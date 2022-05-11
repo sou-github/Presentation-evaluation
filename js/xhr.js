@@ -6,7 +6,7 @@ async function XHRsend(val){
 			reject("mthod name is faild");
 		}
 		xhr.open(val.method, val.url);
-		xhr.onreadystatechange = function() {
+		xhr.onreadystatechange = () => {
 			if(xhr.readyState !== 4){
 				return;
 			}
@@ -16,7 +16,7 @@ async function XHRsend(val){
 				reject(xhr.status + " : " + xhr.responseText);
 			}
 		};
-		xhr.send(val.data);
+		xhr.send(val.data || null);
 	})
 	.then(e => {
 		ret.response = e;
