@@ -18,6 +18,7 @@ canvas, video{
 window.onload = () => {
 	const video  = document.querySelector("#camera");
 	const canvas = document.querySelector("#picture");
+	var ctx = canvas.getContext("2d");
 	const se = document.querySelector('#se');
 
 	//cam settings
@@ -50,7 +51,6 @@ window.onload = () => {
 	});*/
 	
 	let inter = setInterval(async () => {
-		const ctx = canvas.getContext("2d");
 		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 		let ret = await XHRsend({
 			url : "http://nullproductivity.ml/presen/send/",
