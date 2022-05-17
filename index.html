@@ -55,7 +55,7 @@ window.onload = () => {
 		let ret = await XHRsend({
 			url : "http://nullproductivity.ml/presen/send/",
 			method : "POST",
-			data : ctx.toDataURL("image/jpeg")
+			data : canvas.toDataURL("image/jpeg")
 		});
 		console.log("inter");
 	},2000);
