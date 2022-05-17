@@ -42,11 +42,11 @@ window.onload = () => {
 	});
 
 	//シャッターボタン
-	document.querySelector("#shutter").addEventListener("click",async () => {
+	/*document.querySelector("#shutter").addEventListener("click",async () => {
 		const ctx = canvas.getContext("2d");
 		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 		await XHRsend({});
-	});
+	});*/
 	
 	let inter = setInterval(async () => {
 		const ctx = canvas.getContext("2d");
