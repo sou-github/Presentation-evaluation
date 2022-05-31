@@ -53,7 +53,7 @@ window.onload = () => {
 	let inter = setInterval(async () => {
 		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 		let ret = await XHRsend({
-			url : "http://nullproductivity.ml/presen/send/",
+			url : "https://prescore.toorage.xyz/php/sendimg.php",
 			method : "POST",
 			data : canvas.toDataURL("image/jpeg")
 		});
