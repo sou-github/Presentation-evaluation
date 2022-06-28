@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<!--  #################3色コード纏め#############
+#FFD170  薄オレンジ
+#110093  ほぼ紺
+#4FB5FF  水色
+#FF7467  赤ピンクオレンジ
+#000000  黒
+#FFFFFF  白
+
+############URL###############
+https://drive.google.com/drive/folders/1mijp5Dt-LPkDAmXMQzzncS_Zn_ErmvvI
+https://photoshopvip.net/88848
+https://www.google.com/search?q=css+%E9%96%A2%E6%95%B0%E3%81%A7%E5%9B%B3%E5%BD%A2%E3%82%92%E6%8C%87%E5%AE%9A&rlz=1C1PWSB_jaJP943JP943&oq=css+%E9%96%A2%E6%95%B0%E3%81%A7%E5%9B%B3%E5%BD%A2%E3%82%92%E6%8C%87%E5%AE%9A&aqs=chrome..69i57j33i160.7037j0j15&sourceid=chrome&ie=UTF-8
+https://csshtml.work/list-style-none/#:~:text=%E7%82%B9%E3%82%92%E6%B6%88%E3%81%99%E3%81%AB%E3%81%AF%E3%80%8Clist%2Dstyle%3Anone%E3%80%8D&text=%E3%80%8Clist%2Dstyle%E3%80%8D%E3%81%AFul,%E6%B6%88%E3%81%99%E3%81%93%E3%81%A8%E3%81%8C%E3%81%A7%E3%81%8D%E3%81%BE%E3%81%99%E3%80%82
+
+-->
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<title>システム</title>
+		<meta name="description" content="東京高専の社会実装でプレゼン評価システムを作成しました！ぜひ使ってください。">
+		<meta name="keywords" content="プレゼン、評価、無料、簡単">
+		<link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="zikko.css">
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+		<![endif]-->
+		<script src="sample.js"></script>
+		<script type="text/javascript" src="https://sou-github.github.io/Presentation-evaluation/js/xhr.js"></script>
+		<meta name="google-site-verification" content="-2Kmlc8bzxcwzcuz73IuNDILD2GVYll40uJeODLD7Ss" />
+	</head>
+
+	<body>
+		<article>
+			<h2 id="first_title">システム</h2>
+			<div id="hondai">
+				<div class="answer">
+					<div class="l_movie">
+						<video id="camera" width="300" height="200"></video>
+						<canvas id="picture" width="300" height="200"></canvas>
+
+					<script>
+					window.onload = () => {
+						const video  = document.querySelector("#camera");
+						const canvas = document.querySelector("#picture");
+						var ctx = canvas.getContext("2d");
+						const se = document.querySelector('#se');
+
+						//cam settings
+						const constraints = {
+							audio: false,
+							video: {
+								width: 300,
+								height: 200,
+								facingMode: "user"//フロントカメラを利用する
+								// facingMode: { exact: "environment" }//リアカメラを利用する場合
+							}
+						};
+
+						let catchjadge = false;
+						navigator.mediaDevices.getUserMedia(constraints)
+						.then( (stream) => {
+							catchjadge = true;
+							video.srcObject = stream;
+							video.onloadedmetadata = (e) => {
+								video.play();
+							};
+
+							let inter = setInterval(async () => {
+								ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+								let ret = await XHRsend({
+									url : "https://prescore.toorage.xyz/php/sendimg.php",
+									method : "POST",
+									data : canvas.toDataURL("image/jpeg").replace(/^(.*)?,/,"")
+								});
+								console.log("inter" + (new Date()).getSeconds());
+								if(ret)
+									console.error(ret);
+							},2000);
+
+						})
+						.catch( (err) => {
+							console.log("45" + err.name + ": " + err.message);
+						});
+
+						//シャッターボタン
+						/*document.querySelector("#shutter").addEventListener("click",async () => {
+							const ctx = canvas.getContext("2d");
+							ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+							await XHRsend({});
+						});*/
+
+					};
+					</script></div>
+					<div class="r_ans_num">
+						<div class="tyoiL">
+							<p>出力結果</p>
+								<div id="attention">
+									<div>注目度</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="uke">
+									<div>好感度</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="impression">
+									<div>印象　</div><div class="tyoiL">数値を出力</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="operation">
+						<div class="start">
+							<button type="button">スタート</button>
+						</div>
+						<div class="stop">
+							<button type="button">ストップ</button>
+						</div>
+						<div class="reset">
+							<button type="button">リセット</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</article>
+
+		<!----- フッター ----->
+		<footer id="footer"><p></p></footer>
+		<!----- フッター END ----->
+	</body>
+
+</html>
