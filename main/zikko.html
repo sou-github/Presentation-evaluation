@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<!--
+申し送り
+やってほしいことはgetjson.phpで取得したデータを計算して結果を表示することです。
+scriptをhogehogehogeというidのところに記述してください。
+r_ans_numというidの中に表示して下されば、最初に桑原が思った形式で結果の表示が可能です。
+-->
+<html lang="ja">
+	<head>
+		<meta charset="utf-8">
+		<title>システム</title>
+		<meta name="description" content="東京高専の社会実装でプレゼン評価システムを作成しました！ぜひ使ってください。">
+		<meta name="keywords" content="プレゼン、評価、無料、簡単">
+		<link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="zikko.css">
+		<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+		<![endif]-->
+		<script src="sample.js"></script>
+		<script type="text/javascript" src="https://sou-github.github.io/Presentation-evaluation/js/xhr.js"></script>
+		<meta name="google-site-verification" content="-2Kmlc8bzxcwzcuz73IuNDILD2GVYll40uJeODLD7Ss" />
+	</head>
+
+	<body>
+		<article>
+			<h2 id="first_title">システム</h2>
+			<div id="hondai">
+				<div class="answer">
+					<div class="l_movie">
+						<video id="camera" width="300" height="200"></video>
+						<canvas id="picture" width="300" height="200"></canvas>
+
+					<script>
+					window.onload = () => {
+						const video  = document.querySelector("#camera");
+						const canvas = document.querySelector("#picture");
+						var ctx = canvas.getContext("2d");
+						const se = document.querySelector('#se');
+
+						//cam settings
+						const constraints = {
+							audio: false,
+							video: {
+								width: 300,
+								height: 200,
+								facingMode: "user"//フロントカメラを利用する
+								// facingMode: { exact: "environment" }//リアカメラを利用する場合
+							}
+						};
+
+						let catchjadge = false;
+						navigator.mediaDevices.getUserMedia(constraints)
+						.then( (stream) => {
+							catchjadge = true;
+							video.srcObject = stream;
+							video.onloadedmetadata = (e) => {
+								video.play();
+							};
+
+							let inter = setInterval(async () => {
+								ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+								let ret = await XHRsend({
+									url : "https://prescore.toorage.xyz/php/sendimg.php",
+									method : "POST",
+									data : canvas.toDataURL("image/jpeg").replace(/^(.*)?,/,"")
+								});
+								console.log("inter" + (new Date()).getSeconds());
+								if(ret)
+									console.error(ret);
+							},2000);
+
+						})
+						.catch( (err) => {
+							console.log("45" + err.name + ": " + err.message);
+						});
+
+						//シャッターボタン
+						/*document.querySelector("#shutter").addEventListener("click",async () => {
+							const ctx = canvas.getContext("2d");
+							ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+							await XHRsend({});
+						});*/
+
+					};
+					</script></div>
+					<div class="r_ans_num">
+						<script id="hogehogehoge">
+						</script>
+						<div class="tyoiL">
+							<p>出力結果　大体こんな感じで記述してください</p>
+								<div id="suprise">
+									<div>驚き</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="fun">
+									<div>愉快</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="normal">
+									<div>普通　</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="sad">
+									<div>悲しい　</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="kenen">
+									<div>懸念　</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="hate">
+									<div>嫌悪　</div><div class="tyoiL">数値を出力</div>
+								</div>
+								<div id="angry">
+									<div>怒り　</div><div class="tyoiL">数値を出力</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</article>
+
+		<!----- フッター ----->
+		<footer id="footer"><p></p></footer>
+		<!----- フッター END ----->
+	</body>
+<!--					<div class="operation">
+						<div class="start">
+							<button type="button">スタート</button>
+						</div>
+						<div class="stop">
+							<button type="button">ストップ</button>
+						</div>
+						<div class="reset">
+							<button type="button">リセット</button>
+						</div>
+					</div>-->
+</html>
